@@ -42,4 +42,20 @@ class PostController extends Controller
         return response()->json(Post::findOrFail($id));
     }
 
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+        $input = $request->all();
+        $uPost = $post->update($input);
+        return response()->json($uPost);
+    }
+
 }
