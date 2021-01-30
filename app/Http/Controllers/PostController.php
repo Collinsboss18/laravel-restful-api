@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\POST;
+use App\Models\Post;
+use Exception;
 
 class PostController extends Controller
 {
@@ -25,10 +26,13 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $input = $request->all();
-        $post = Post::create($input);
-        return response()->json($post);
+        try {
+            $post = Post::create($request->all());
+            return response()->json($post);
+        } catch (Exception $e) {
+            report($e);
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -39,7 +43,14 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        return response()->json(Post::findOrFail($id));
+        try {
+            if (Post::find($id) == true) return response()->json(Post::findOrFail($id));
+            $res = array( "message" => "Post dose not exist" );
+            return response()->json($res);
+        } catch (Exception $e) {
+            report($e);
+            return $e->getMessage();
+        }
     }
 
 
@@ -52,10 +63,19 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
-        $input = $request->all();
-        $uPost = $post->update($input);
-        return response()->json($uPost);
+        try {
+            if (Post::find($id) == true) {
+                $post = Post::findOrFail($id);
+                $input = $request->all();
+                $uPost = $post->update($input);
+                return response()->json($uPost);
+            }
+            $res = array( "message" => "Post dose not exist" );
+            return response()->json($res);
+        } catch (Exception $e) {
+            report($e);
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -66,6 +86,17 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        return response()->json(Post::findOrFail($id));
+        try {
+            if (Post::find($id) == true) {
+                Post::destroy($id);
+                $res = array( "message" => "Posted deleted" );
+                return response()->json($res);
+            }
+            $res = array( "message" => "Post dose not exist" );
+            return response()->json($res);
+        } catch (Exception $e) {
+            report($e);
+            return $e->getMessage();
+        }
     }
 }
