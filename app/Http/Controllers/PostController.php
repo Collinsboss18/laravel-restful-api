@@ -58,4 +58,14 @@ class PostController extends Controller
         return response()->json($uPost);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        return response()->json(Post::findOrFail($id));
+    }
 }
